@@ -1,7 +1,6 @@
 {
   "name": "express-biztime",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,5 +12,14 @@
   "dependencies": {
     "express": "^5.0.0-alpha.8",
     "pg": "^8.7.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stocktons/biztime.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stocktons/biztime/issues"
+  },
+  "homepage": "https://github.com/stocktons/biztime#readme",
+  "description": ""
 }
