@@ -1,5 +1,5 @@
 \echo 'Delete and recreate biztime db?'
-\prompt 'Return for yes or control-C to cancel > ' foo
+\prompt 'Return for yes or control-C to cancel > ' foo --gets the echo to appear? 
 
 DROP DATABASE IF EXISTS biztime;
 CREATE DATABASE biztime;
