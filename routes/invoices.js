@@ -46,6 +46,49 @@ router.get("/:id", async function (req, res, next) {
     return res.json({ invoice, company });
 });
 
+/** POST / - create invoice from data; return `{invoice: {id, comp_code, 
+ * amt, paid, add_date, paid_date}}` */
 
+router.post("/", async function (req, res, next) {
+  const { comp_code, amt } = req.body;
+  const results = await db.query(
+    `INSERT INTO invoices (comp_code, amt)
+         VALUES ($1, $2)
+         RETURNING id, comp_code, amt, paid, add_date, paid_date`,
+    [comp_code, amt]);
+  const invoice = results.rows[0];
+
+  return res.status(201).json({ invoice });
+});
+
+/** PUT /[id] - update amount field in an invoice; return `{invoice: {id, comp_code, 
+ * amt, paid, add_date, paid_date}}` */
+
+router.put("/:id", async function (req, res, next) {
+
+  const id = req.params.id;
+  const results = await db.query(
+    `UPDATE invoices
+         SET amt=$2        
+         WHERE id = $1
+         RETURNING id, comp_code, amt, paid, add_date, paid_date`,
+    [id, req.body.amt]);
+  const invoice = results.rows[0];
+
+  if (!invoice) throw new NotFoundError(`No matching invoice: ${id}`);
+  return res.json({ invoice });
+});
+
+/** DELETE /[id] - delete invoice, return `{status: "deleted"}` */
+
+router.delete("/:id", async function (req, res, next) {
+  const id = req.params.id;
+  const results = await db.query(
+    "DELETE FROM invoices WHERE id = $1 RETURNING id", [id]);
+  const invoice = results.rows[0];
+
+  if (!invoice) throw new NotFoundError(`No matching invoice: ${id}`);
+  return res.json({ status: "deleted" });
+});
 
 module.exports = router;

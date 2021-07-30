@@ -14,22 +14,28 @@ router.get("/", async function (req, res, next) {
     return res.json({ companies });
   });
 
-  /** GET /[id] - return data about one company: `{company: {code, name, description}}` */
+  /** GET /[code] - return data about one company: `{company: {code, name, description}, {invoices: [id, ...]}}` */
 
 router.get("/:code", async function (req, res, next) {
-    // console.log("WE MADE IT!")
+
     const code = req.params.code;
     
-    const results = await db.query(
+    const cResults = await db.query(
         "SELECT code, name, description FROM companies WHERE code = $1", [code]);
     
-    const company = results.rows[0];
+    const company = cResults.rows[0];
+
+    const iResults = await db.query(
+      `SELECT id
+      FROM invoices
+      WHERE comp_code = $1
+      ORDER BY id`, [code]);
+      const invoices = iResults.rows.map(i => i.id);
+    // const invoices = iResults.rows.map(i => i.id).sort((a, b) => a - b);
 
     if (!company) throw new NotFoundError(`No matching company: ${code}`);
     
-    // could use object shorthand since company is the same name (same for POST, PUT)
-    return res.json({ "company": company });
-
+    return res.json({ company, invoices });
 });
 
 /** POST / - create company from data; return `{company: {code, name, description}}` */
